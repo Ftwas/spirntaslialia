@@ -1,4 +1,4 @@
-name: Move issues to Awaiting Response
+name: Move Issue on Comment
 
 on:
   issue_comment:
@@ -8,11 +8,9 @@ jobs:
   move-issue:
     runs-on: ubuntu-latest
     steps:
-    - name: Move issue to 'Awaiting Response' column
-      uses: fojia/action-move-issues-to-column@master
-      with:
-        project: 'Ftwas's trilili'
-        column: 'Awaiting Response'
-        owner: 'Ftwas'
-        repo: 'spirntaslialia'
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Move issue to "Awaiting Response" column
+        uses: alex-page/github-project-automation-plus@v0.8.3
+        with:
+          project: "Your Project Name"
+          column: "Awaiting Response"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
