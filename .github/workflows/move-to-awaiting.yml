@@ -1,46 +1,17 @@
-name: "Change Issue Status After Comment"
+name: Move Issue on Comment
 
 on:
   issue_comment:
     types: [created]
 
 jobs:
-  change-status:
+  move-to-awaiting-response:
     runs-on: ubuntu-latest
-    if: github.event.issue.pull_request == false # Tikrinama, ar tai issue, o ne PR
+    name: Move Issue to Awaiting Response
     steps:
-      - name: Move issue to new status
-        uses: actions/github-script@v6
+      - name: Move issue to Awaiting Response column
+        uses: alex-page/github-project-automation-plus@v0.8.1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            // Gauti issue numerį
-            const issueNumber = context.issue.number;
-            
-            // Pridėti naują etiketę (label), kuri atspindi naują statusą
-            await github.rest.issues.addLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issueNumber,
-              labels: ['awaiting-response']
-            });
-            
-            // Pašalinti seną statuso etiketę, jei tokia yra
-            try {
-              await github.rest.issues.removeLabel({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issueNumber,
-                name: 'in-progress'
-              });
-            } catch (error) {
-              console.log("Sena etiketė neegzistuoja arba nepavyko pašalinti");
-            }
-            
-            // Pridėti komentarą apie statuso pakeitimą
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issueNumber,
-              body: 'Šio issue statusas buvo pakeistas į "Awaiting Response".'
-            });
+          project: "sprintaslialia"
+          column: "Awaiting Response"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
