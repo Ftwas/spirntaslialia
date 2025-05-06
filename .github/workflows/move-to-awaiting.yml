@@ -18,7 +18,7 @@ jobs:
             const issueNumber = context.issue.number;
 
             // customize these
-            const projectName = 'Your Project Name';
+            const projectName = '@Ftwas's trilili';
             const targetColumnName = 'Awaiting Response';
 
             // 1) find the project
