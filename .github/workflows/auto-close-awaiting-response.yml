@@ -1,13 +1,15 @@
 name: Auto-close Awaiting Response Issues
 
 on:
-permissions:
-  issues: write
+
   schedule:
 
     - cron: '*/1 * * * *'
 
   workflow_dispatch:
+
+permissions:
+  issues: write
 
 jobs:
 
