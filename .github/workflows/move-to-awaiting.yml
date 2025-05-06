@@ -1,42 +1,46 @@
-name: "Move Issue to Awaiting Response"
+name: "Change Issue Status After Comment"
 
 on:
   issue_comment:
     types: [created]
 
 jobs:
-  move-issue:
+  change-status:
     runs-on: ubuntu-latest
+    if: github.event.issue.pull_request == false # Tikrinama, ar tai issue, o ne PR
     steps:
-      - name: Move issue to Awaiting Response
+      - name: Move issue to new status
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             // Gauti issue numerį
             const issueNumber = context.issue.number;
             
-            // Patikrinti, ar tai yra issue, o ne PR
-            const issue = await github.rest.issues.get({
+            // Pridėti naują etiketę (label), kuri atspindi naują statusą
+            await github.rest.issues.addLabels({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: issueNumber
+              issue_number: issueNumber,
+              labels: ['awaiting-response']
             });
             
-            if (issue.data.pull_request) {
-              console.log("Tai yra PR, ne issue. Nieko nedarome.");
-              return;
+            // Pašalinti seną statuso etiketę, jei tokia yra
+            try {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                name: 'in-progress'
+              });
+            } catch (error) {
+              console.log("Sena etiketė neegzistuoja arba nepavyko pašalinti");
             }
             
-            // Gauti projekto informaciją
-            // Pastaba: čia reikia pritaikyti pagal jūsų projekto ID ir stulpelio ID
-            const projectId = 'YOUR_PROJECT_ID';
-            const awaitingResponseColumnId = 'YOUR_AWAITING_RESPONSE_COLUMN_ID';
-            
-            // Perkelti issue į "Awaiting Response" stulpelį
-            await github.rest.projects.moveCard({
-              card_id: issue.data.id,
-              position: 'top',
-              column_id: awaitingResponseColumnId
+            // Pridėti komentarą apie statuso pakeitimą
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: 'Šio issue statusas buvo pakeistas į "Awaiting Response".'
             });
-            
-            console.log(`Issue #${issueNumber} perkeltas į "Awaiting Response" stulpelį`);
