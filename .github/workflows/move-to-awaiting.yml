@@ -1,50 +1,19 @@
-name: Move issue to Awaiting Response on comment
+name: nahuj
 
 on:
   issue_comment:
     types: [created]
 
 jobs:
-  move-card:
+  move_to_awaiting_response:
     runs-on: ubuntu-latest
+    if: github.event.issue.pull_request == null  # only run on issues, not PRs
     steps:
-      - name: Move project card to "Awaiting Response"
-        uses: actions/github-script@v7
+      - name: Move issue to “Awaiting Response”
+        uses: alex-page/github-project-automation-plus@v0.8.0
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            // grab repo info & issue number
-            const { owner, repo } = context.repo;
-            const issueNumber = context.issue.number;
-
-            // customize these
-            const projectName = 'Ftwas's trilili';
-            const targetColumnName = 'Awaiting Response';
-
-            // 1) find the project
-            const { data: projects } = await github.rest.projects.listForRepo({ owner, repo });
-            const project = projects.find(p => p.name === projectName);
-            if (!project) throw new Error(`Project "${projectName}" not found`);
-
-            // 2) find the target column
-            const { data: columns } = await github.rest.projects.listColumns({ project_id: project.id });
-            const targetColumn = columns.find(c => c.name === targetColumnName);
-            if (!targetColumn) throw new Error(`Column "${targetColumnName}" not found`);
-
-            // 3) locate the card for this issue
-            let cardToMove = null;
-            for (const col of columns) {
-              const { data: cards } = await github.rest.projects.listCards({ column_id: col.id });
-              cardToMove = cards.find(c =>
-                c.content_url && c.content_url.endsWith(`/issues/${issueNumber}`)
-              );
-              if (cardToMove) break;
-            }
-            if (!cardToMove) throw new Error(`Card for issue #${issueNumber} not found`);
-
-            // 4) move the card
-            await github.rest.projects.moveCard({
-              card_id: cardToMove.id,
-              column_id: targetColumn.id,
-              position: 'top'
-            });
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          project_url: https://github.com/users/Ftwas/projects/7
+          column_name: "Awaiting Response"
+          # Filter for the just-commented issue by its number
+          issue_query: "number = ${{ github.event.issue.number }}"
