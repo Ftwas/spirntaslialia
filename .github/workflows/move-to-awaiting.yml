@@ -18,7 +18,7 @@ jobs:
             const repo = context.repo.repo;
             const owner = context.repo.owner;
             const issueNumber = context.issue.number;
-            const projectName = 'Ftwas's trilili';
+            const projectName = '@Ftwas's trilili';
             const targetColumnName = 'Awaiting Response';
 
             // 1. Find the project by name
