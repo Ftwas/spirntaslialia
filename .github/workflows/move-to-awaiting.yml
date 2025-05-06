@@ -1,19 +1,18 @@
-name: Move Issue on Comment
+name: Move issues to Awaiting Response
 
 on:
   issue_comment:
     types: [created]
 
 jobs:
-  move-to-awaiting-response:
+  move-issue:
     runs-on: ubuntu-latest
-    name: Move Issue to Awaiting Response
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Move to Awaiting Response
-        uses: kin/gh-action-move-issue-to-column@1.0
-        with:
-          access-token: ${{ secrets.GITHUB_TOKEN }}
-          project-name: "Ftwas's trilili"
-          target-column: "Awaiting Response"
+    - name: Move issue to 'Awaiting Response' column
+      uses: fojia/action-move-issues-to-column@master
+      with:
+        project: 'Ftwas's trilili'
+        column: 'Awaiting Response'
+        owner: 'Ftwas'
+        repo: 'spirntaslialia'
+        github_token: ${{ secrets.GITHUB_TOKEN }}
