@@ -1,16 +1,27 @@
-name: Move Issue on Comment
+name: "Move Issue to Awaiting Response"
 
 on:
   issue_comment:
     types: [created]
 
 jobs:
-  move-issue:
+  move-to-awaiting:
     runs-on: ubuntu-latest
+    # Only run on actual issues, not PRs
+    if: ${{ !github.event.issue.pull_request }}
     steps:
-      - name: Move issue to "Awaiting Response" column
-        uses: alex-page/github-project-automation-plus@v0.8.3
+      - name: Get GitHub App Token
+        id: token
+        uses: actions/create-github-app-token@v1
         with:
-          project: "Your Project Name"
-          column: "Awaiting Response"
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          app-id: ${{ vars.YOUR_APP_ID }}
+          private-key: ${{ secrets.YOUR_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          
+      - name: Move Issue to Awaiting Response
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.token.outputs.token || github.token }}
+          script: |
+            // Your script to move the issue to "awaiting response"
+            // This will depend on whether you're using Projects (classic) or Projects (beta)
