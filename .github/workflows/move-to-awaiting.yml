@@ -9,9 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     name: Move Issue to Awaiting Response
     steps:
-      - name: Move issue to Awaiting Response column
-        uses: alex-page/github-project-automation-plus@v0.8.1
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Move to Awaiting Response
+        uses: kin/gh-action-move-issue-to-column@1.0
         with:
-          project: "@Ftwas's trilili"
-          column: "Awaiting Response"
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+          project-name: "Ftwas's trilili"
+          target-column: "Awaiting Response"
