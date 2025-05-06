@@ -1,0 +1,42 @@
+name: "Move Issue to Awaiting Response"
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  move-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Move issue to Awaiting Response
+        uses: actions/github-script@v6
+        with:
+          script: |
+            // Gauti issue numerį
+            const issueNumber = context.issue.number;
+            
+            // Patikrinti, ar tai yra issue, o ne PR
+            const issue = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber
+            });
+            
+            if (issue.data.pull_request) {
+              console.log("Tai yra PR, ne issue. Nieko nedarome.");
+              return;
+            }
+            
+            // Gauti projekto informaciją
+            // Pastaba: čia reikia pritaikyti pagal jūsų projekto ID ir stulpelio ID
+            const projectId = 'YOUR_PROJECT_ID';
+            const awaitingResponseColumnId = 'YOUR_AWAITING_RESPONSE_COLUMN_ID';
+            
+            // Perkelti issue į "Awaiting Response" stulpelį
+            await github.rest.projects.moveCard({
+              card_id: issue.data.id,
+              position: 'top',
+              column_id: awaitingResponseColumnId
+            });
+            
+            console.log(`Issue #${issueNumber} perkeltas į "Awaiting Response" stulpelį`);
