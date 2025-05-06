@@ -1,7 +1,8 @@
 name: Auto-close Awaiting Response Issues
 
 on:
-
+permissions:
+  issues: write
   schedule:
 
     - cron: '*/1 * * * *'
