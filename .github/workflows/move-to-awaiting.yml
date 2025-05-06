@@ -12,6 +12,6 @@ jobs:
       - name: Move issue to Awaiting Response column
         uses: alex-page/github-project-automation-plus@v0.8.1
         with:
-          project: "sprintaslialia"
+          project: "@Ftwas's trilili"
           column: "Awaiting Response"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
